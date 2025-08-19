@@ -15,7 +15,9 @@ export async function getPublicProjectByHost(host: string) {
 export async function listPublicImagesByHostAndTag(host: string, tag?: string) {
   const sb = await createClient()
   const { data, error } = await sb.rpc('list_public_images_by_host_tag', { p_host: host, p_tag: tag ?? null })
-  if (error) throw error
+  if (error) throw error;
+
+  // console.log(data);
   return data ?? []
 }
 

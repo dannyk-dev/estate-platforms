@@ -27,19 +27,24 @@ function extFromNameOrType(file: File): string {
   return 'bin'
 }
 
-function getFiles(form: FormData, names = ['images', 'file', 'files']): File[] {
-  const out: File[] = []
-  for (const n of names) {
-    for (const v of form.getAll(n)) {
-      if (v instanceof File && v.size > 0) out.push(v)
-    }
-    // also support `name[]`
-    for (const v of form.getAll(`${n}[]`)) {
-      if (v instanceof File && v.size > 0) out.push(v)
-    }
+function pickFiles(input: unknown, names = ['images', 'file', 'files']): File[] {
+  const f: File[] = []
+  const anyForm = input as any
+  if (anyForm && typeof anyForm.getAll === 'function') {
+    for (const n of names) for (const v of anyForm.getAll(n)) if (v instanceof File && v.size > 0) f.push(v)
+    for (const n of names) for (const v of anyForm.getAll(n + '[]')) if (v instanceof File && v.size > 0) f.push(v)
+    return f
   }
-  return out
+  // tolerate accidental direct calls passing plain objects
+  const candidates = [anyForm?.images, anyForm?.file, anyForm?.files, anyForm?.['images[]'], anyForm?.['files[]']]
+  for (const c of candidates) {
+    if (!c) continue
+    if (c instanceof File && c.size > 0) f.push(c)
+    else if (Array.isArray(c)) for (const v of c) if (v instanceof File && v.size > 0) f.push(v)
+  }
+  return f
 }
+
 
 export async function uploadImagesAction(projectId: string, form: FormData): Promise<SimpleState> {
   try {
@@ -52,7 +57,7 @@ export async function uploadImagesAction(projectId: string, form: FormData): Pro
     if (uErr) return { error: uErr.message }
     if (!u.user) return { error: 'AUTH_REQUIRED' }
 
-    const files = getFiles(form)
+    const files = pickFiles(form)
     if (files.length === 0) return { error: 'NO_FILES' }
 
     // Current max position

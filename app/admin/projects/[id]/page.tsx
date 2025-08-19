@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import { rootDomain } from '@/lib/utils'
 import { ProjectEditorForm } from '@/app/admin/projects/project-form'
 import { GalleryPanel } from '@/app/admin/projects/[id]/gallery-panel'
+import { Suspense } from 'react'
 
 export const metadata: Metadata = {
   title: `Edit Project | ${rootDomain}`,
@@ -42,7 +43,9 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
             published: !!p.published,
           }}
         />
-        <GalleryPanel projectId={p.id} />
+        <Suspense fallback={<div className="text-gray-500">Loading gallery...</div>}>
+          <GalleryPanel projectId={p.id} />
+        </Suspense>
       </div>
     </div>
   )

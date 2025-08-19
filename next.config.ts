@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: SUPABASE_HOST, pathname: '/storage/v1/object/public/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/photo-**' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/u/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/a/**' },
+      { protocol: 'https', hostname: 'pbs.twimg.com', pathname: '/profile_images/**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
     ],
   },
   // Ensure proper handling of Vercel Analytics and Speed Insights

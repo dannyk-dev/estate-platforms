@@ -125,7 +125,6 @@ export function ProjectEditorForm({
         </div>
       </form>
 
-      {/* GALLERY UPLOADER (SEPARATE FORM) */}
       {mode === 'edit' && defaults?.id ? (
         <Card className="mt-6 p-4 space-y-4">
           <div>
