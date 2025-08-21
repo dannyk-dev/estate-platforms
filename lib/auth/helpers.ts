@@ -9,7 +9,7 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(s => s.trim
 export async function getSessionUser() {
   const sb = await createClient()
   const { data: { user }, error } = await sb.auth.getUser()
-  if (error) throw error
+  // if (error) throw error
   return user
 }
 

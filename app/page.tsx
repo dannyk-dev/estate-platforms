@@ -1,42 +1,45 @@
 // app/page.tsx
-import Image from 'next/image'
-import Link from 'next/link'
-import type { Metadata } from 'next'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { rootDomain, protocol } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/server'
-import { SignOutButton } from '@/components/auth/signout-button'
+import Image from "next/image";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { rootDomain, protocol } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/server";
+import { SignOutButton } from "@/components/auth/signout-button";
+import { assertAdmin, getSessionUser } from "@/lib/auth/helpers";
 
 export const metadata: Metadata = {
   title: `${rootDomain} — Properties`,
   description: `Browse published projects on ${rootDomain}`,
-}
+};
 
 type ProjectRow = {
-  id: string
-  slug: string
-  name: string
-  headline: string | null
-  hero_url: string | null
-  created_at: string
-}
+  id: string;
+  slug: string;
+  name: string;
+  headline: string | null;
+  hero_url: string | null;
+  created_at: string;
+};
 
 export default async function HomePage() {
-  const sb = await createClient()
+  const sb = await createClient();
+  // const {} = await assertAdmin();
+  const user = await getSessionUser();
 
   const { data, error } = await sb
-    .from('projects')
-    .select('id, slug, name, headline, hero_url, created_at')
-    .eq('published', true)
-    .order('created_at', { ascending: false })
+    .from("projects")
+    .select("id, slug, name, headline, hero_url, created_at")
+    .eq("published", true)
+    .order("created_at", { ascending: false });
 
   if (error) {
     // Minimal hard failure. You can render a nicer error boundary if desired.
-    throw error
+    throw error;
   }
 
-  const projects = (data ?? []) as ProjectRow[]
+  const projects = (data ?? []) as ProjectRow[];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
@@ -45,12 +48,28 @@ export default async function HomePage() {
           MasterChellyProjects
         </h1>
         <div className="flex space-x-2">
-          <Button asChild variant="default" size="sm">
-            <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-700">
-              Dashboard
-            </Link>
-          </Button>
-        <SignOutButton />
+          {user ? (
+            <>
+              <Button asChild variant="default" size="sm">
+                <Link
+                  href="/admin"
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Dashboard
+                </Link>
+              </Button>
+              <SignOutButton />
+            </>
+          ) : (
+            <Button asChild variant="outline" size="sm">
+              <Link
+                href="/login"
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Sign in
+              </Link>
+            </Button>
+          )}
         </div>
       </header>
 
@@ -64,8 +83,8 @@ export default async function HomePage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => {
-              const href = `${protocol}://${p.slug}.${rootDomain}`
-              const created = new Date(p.created_at).toLocaleDateString()
+              const href = `${protocol}://${p.slug}.${rootDomain}`;
+              const created = new Date(p.created_at).toLocaleDateString();
               return (
                 <Card key={p.id} className="overflow-hidden">
                   <div className="relative w-full aspect-[16/9] bg-gray-100">
@@ -86,7 +105,9 @@ export default async function HomePage() {
                     </p>
                   </CardHeader>
                   <CardContent className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Created: {created}</span>
+                    <span className="text-xs text-gray-500">
+                      Created: {created}
+                    </span>
                     <Button asChild size="sm" variant="outline">
                       <a href={href} target="_blank" rel="noopener noreferrer">
                         View project
@@ -94,11 +115,11 @@ export default async function HomePage() {
                     </Button>
                   </CardContent>
                 </Card>
-              )
+              );
             })}
           </div>
         )}
       </main>
     </div>
-  )
+  );
 }
