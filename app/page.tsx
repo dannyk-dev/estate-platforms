@@ -41,13 +41,15 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
-          {rootDomain}
+        <h1 className="text-xl text-gray-600 font-semibold  hover:text-gray-900">
+          MasterChellyProjects
         </h1>
         <div className="flex space-x-2">
-          <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-700">
-          Admin
-        </Link>
+          <Button asChild variant="default" size="sm">
+            <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-700">
+              Dashboard
+            </Link>
+          </Button>
         <SignOutButton />
         </div>
       </header>

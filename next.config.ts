@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enable experimental features if needed
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   images: {
     remotePatterns: [

@@ -110,13 +110,14 @@ export default async function SubdomainPage({
         <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
           <Link
             href={`${protocol}://${rootDomain}`}
-            className="text-sm text-gray-600 hover:text-gray-900"
+            className="text-lg text-gray-600 font-semibold  hover:text-gray-900"
           >
-            {rootDomain}
+            MasterChellyProjects
           </Link>
           <span className="text-sm text-gray-500">
             {subdomain}.{rootDomain}
           </span>
+
         </div>
       </div>
 
